@@ -2,7 +2,7 @@ menu = {
     'Pizza': 120,
     'Burger': 80,
     'Salad': 40,
-    'Coffe': 25,
+    'Coffee': 25,
     'Sihab': 0.2,
 }
 
