@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>3x3 Tic-Tac-Toe</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        #board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-gap: 5px;
+            margin: 20px auto;
+            width: 310px;
+        }
+        .cell {
+            width: 100px;
+            height: 100px;
+            background-color: #f0f0f0;
+            font-size: 48px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            border-radius: 8px;
+            border: 2px solid #333;
+        }
+        .cell.X { color: green; }
+        .cell.O { color: red; }
+        #message {
+            font-size: 24px;
+            margin-top: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            margin-top: 15px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<h1>3x3 Tic-Tac-Toe</h1>
+<div id="board"></div>
+<div id="message"></div>
+<button onclick="restart()">Restart</button>
+
+<script>
+    const board = document.getElementById('board');
+    const message = document.getElementById('message');
+    let cells = [];
+    let currentPlayer = 'X';
+    let gameOver = false;
+
+    function createBoard() {
+        board.innerHTML = '';
+        cells = [];
+
+        for (let i = 0; i < 9; i++) {
+            const cell = document.createElement('div');
+            cell.className = 'cell';
+            cell.dataset.index = i;
+            cell.addEventListener('click', playerMove);
+            board.appendChild(cell);
+            cells.push(cell);
+        }
+
+        message.textContent = "Player's turn (X)";
+        gameOver = false;
+        currentPlayer = 'X';
+    }
+
+    function playerMove(event) {
+        if (gameOver) return;
+        const index = event.target.dataset.index;
+
+        if (cells[index].textContent === '') {
+            cells[index].textContent = 'X';
+            cells[index].classList.add('X');
+            if (checkWinner('X')) {
+                message.textContent = 'Player wins!';
+                gameOver = true;
+                return;
+            }
+            if (isBoardFull()) {
+                message.textContent = "It's a draw!";
+                gameOver = true;
+                return;
+            }
+            message.textContent = "Computer's turn (O)";
+            setTimeout(computerMove, 500);
+        }
+    }
+
+    function computerMove() {
+        if (gameOver) return;
+
+        let emptyCells = cells.filter(cell => cell.textContent === '');
+        if (emptyCells.length === 0) return;
+
+        const randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+        randomCell.textContent = 'O';
+        randomCell.classList.add('O');
+
+        if (checkWinner('O')) {
+            message.textContent = 'Computer wins!';
+            gameOver = true;
+            return;
+        }
+
+        if (isBoardFull()) {
+            message.textContent = "It's a draw!";
+            gameOver = true;
+            return;
+        }
+
+        message.textContent = "Player's turn (X)";
+    }
+
+    function checkWinner(player) {
+        const winPatterns = [
+            [0,1,2], [3,4,5], [6,7,8], // rows
+            [0,3,6], [1,4,7], [2,5,8], // columns
+            [0,4,8], [2,4,6]           // diagonals
+        ];
+
+        return winPatterns.some(pattern => 
+            pattern.every(index => cells[index].textContent === player)
+        );
+    }
+
+    function isBoardFull() {
+        return cells.every(cell => cell.textContent !== '');
+    }
+
+    function restart() {
+        createBoard();
+    }
+
+    createBoard();
+</script>
+
+</body>
+</html>
